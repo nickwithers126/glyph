@@ -83,7 +83,7 @@ export default function Home() {
             }
           }}
           placeholder="type something..."
-          className="w-full border-b border-zinc-500 bg-transparent px-1 py-1 text-base text-black outline-none placeholder:text-zinc-500 focus:border-black/50"
+          className="w-full border-b border-zinc-500 bg-transparent px-1 py-1 text-center text-base text-black outline-none placeholder:text-zinc-500 focus:border-black/50"
         />
 
         {loading && <p className="text-sm text-zinc-500">Searching...</p>}
