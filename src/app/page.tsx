@@ -59,13 +59,13 @@ export default function Home() {
   }, [input]);
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans">
-      <main className="flex w-full max-w-xl flex-col items-center gap-24 px-6 py-16">
+    <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans">
+      <main className="flex w-full max-w-xl flex-col items-center gap-24 px-6 pt-40 pb-16">
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-black">
             glyph
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-md text-zinc-600">
             Find the Unicode character you’re thinking of, powered by Jev
           </p>
         </div>
@@ -83,10 +83,10 @@ export default function Home() {
             }
           }}
           placeholder="type something..."
-          className="w-full border-b border-black/20 bg-transparent px-1 py-1 text-base text-black outline-none placeholder:text-zinc-400 focus:border-black/50"
+          className="w-full border-b border-zinc-500 bg-transparent px-1 py-1 text-base text-black outline-none placeholder:text-zinc-500 focus:border-black/50"
         />
 
-        {loading && <p className="text-sm text-zinc-400">Searching...</p>}
+        {loading && <p className="text-sm text-zinc-500">Searching...</p>}
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
@@ -108,7 +108,7 @@ export default function Home() {
                 className="flex flex-col items-center gap-2 rounded-md p-1 transition-colors hover:bg-black/5"
               >
                 <span className="text-4xl text-black">{glyph}</span>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-zinc-500">
                   {copiedGlyph === glyph
                     ? "Copied!"
                     : `${Math.round(probability * 100)}%`}
