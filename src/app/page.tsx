@@ -1,68 +1,106 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface GlyphMatch {
+  glyph: string;
+  probability: number;
+}
 
 export default function Home() {
+  const [input, setInput] = useState("");
+  const [glyphs, setGlyphs] = useState<GlyphMatch[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const phrase = input.trim();
+
+    if (!phrase) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const res = await fetch("/api/glpyhs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phrase }),
+          signal: controller.signal,
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error ?? "Failed to fetch glyphs.");
+        }
+
+        setGlyphs(data.glyphs ?? []);
+      } catch (err) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          setError(err.message);
+          setGlyphs([]);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }, 400);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeout);
+    };
+  }, [input]);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans">
+      <main className="flex w-full max-w-xl flex-1 flex-col gap-6 px-6 py-16 sm:py-24">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-semibold tracking-tight text-black">
+            glyph
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-sm text-zinc-500">
+            Find the Unicode character you’re thinking of.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => {
+            const value = e.target.value;
+            setInput(value);
+            if (!value.trim()) {
+              setGlyphs([]);
+              setError(null);
+              setLoading(false);
+            }
+          }}
+          placeholder="Type something..."
+          className="w-full border-b border-black/20 bg-transparent px-1 py-1 text-base text-black outline-none placeholder:text-zinc-400 focus:border-black/50"
+        />
+
+        {loading && <p className="text-sm text-zinc-400">Searching...</p>}
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
+
+        {!loading && glyphs.length > 0 && (
+          <div className="flex flex-wrap gap-6">
+            {glyphs.map(({ glyph, probability }) => (
+              <div key={glyph} className="flex flex-col items-center gap-1">
+                <span className="text-3xl text-black">{glyph}</span>
+                <span className="text-xs text-zinc-400">
+                  {Math.round(probability * 100)}%
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
