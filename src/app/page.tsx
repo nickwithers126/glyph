@@ -66,7 +66,15 @@ export default function Home() {
             glyph
           </h1>
           <p className="text-md text-zinc-600">
-            Find the Unicode character you’re thinking of, powered by Jev
+            Find the Unicode character you’re thinking of, powered by{" "}
+            <a
+              href="https://typesafe.ai/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:cursor-pointer"
+            >
+              Jev
+            </a>
           </p>
         </div>
 
