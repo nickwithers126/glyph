@@ -58,14 +58,14 @@ export default function Home() {
   }, [input]);
 
   return (
-    <div className="flex flex-1 flex-col items-center bg-zinc-50 font-sans">
-      <main className="flex w-full max-w-xl flex-1 flex-col gap-6 px-6 py-16 sm:py-24">
-        <div className="flex flex-col gap-1">
+    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans">
+      <main className="flex w-full max-w-xl flex-col items-center gap-24 px-6 py-16">
+        <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-black">
             glyph
           </h1>
           <p className="text-sm text-zinc-500">
-            Find the Unicode character you’re thinking of.
+            Find the Unicode character you’re thinking of, powered by Jev
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function Home() {
               setLoading(false);
             }
           }}
-          placeholder="Type something..."
+          placeholder="type something..."
           className="w-full border-b border-black/20 bg-transparent px-1 py-1 text-base text-black outline-none placeholder:text-zinc-400 focus:border-black/50"
         />
 
@@ -90,10 +90,10 @@ export default function Home() {
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         {!loading && glyphs.length > 0 && (
-          <div className="flex flex-wrap gap-6">
+          <div className="flex w-full justify-between">
             {glyphs.map(({ glyph, probability }) => (
-              <div key={glyph} className="flex flex-col items-center gap-1">
-                <span className="text-3xl text-black">{glyph}</span>
+              <div key={glyph} className="flex flex-col items-center gap-2">
+                <span className="text-4xl text-black">{glyph}</span>
                 <span className="text-xs text-zinc-400">
                   {Math.round(probability * 100)}%
                 </span>
