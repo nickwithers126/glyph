@@ -12,6 +12,7 @@ export default function Home() {
   const [glyphs, setGlyphs] = useState<GlyphMatch[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copiedGlyph, setCopiedGlyph] = useState<string | null>(null);
 
   useEffect(() => {
     const phrase = input.trim();
@@ -92,12 +93,27 @@ export default function Home() {
         {!loading && glyphs.length > 0 && (
           <div className="flex w-full justify-between">
             {glyphs.map(({ glyph, probability }) => (
-              <div key={glyph} className="flex flex-col items-center gap-2">
+              <button
+                key={glyph}
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(glyph);
+                  setCopiedGlyph(glyph);
+                  setTimeout(
+                    () => setCopiedGlyph((current) => (current === glyph ? null : current)),
+                    1200
+                  );
+                }}
+                title="Click to copy"
+                className="flex flex-col items-center gap-2 rounded-md p-1 transition-colors hover:bg-black/5"
+              >
                 <span className="text-4xl text-black">{glyph}</span>
                 <span className="text-xs text-zinc-400">
-                  {Math.round(probability * 100)}%
+                  {copiedGlyph === glyph
+                    ? "Copied!"
+                    : `${Math.round(probability * 100)}%`}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         )}
