@@ -25,9 +25,7 @@ export async function POST(request: Request) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          state: {
-            phrase,
-          },
+          state: phrase,
           model: "jev-latest",
           questions: {
             glyph_match: {
